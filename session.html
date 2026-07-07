@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>گفت‌وگو — Pearl of Persia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opt,wght@0,6..96,400;0,6..96,500;1,6..96,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css?v=36">
+</head>
+<body class="lang-fa" dir="rtl">
+<div id="site-header"></div>
+
+<main>
+  <section>
+    <div class="narrow" id="sessionRoot"><!-- rendered by JS --></div>
+  </section>
+</main>
+
+<div id="site-footer"></div>
+<div id="site-kairos"></div>
+<script src="assets/js/content.js?v=36"></script>
+<script src="assets/js/episodes.js?v=36"></script>
+<script src="assets/js/app.js?v=36"></script>
+<script>
+  window.popPageInit = function(){
+    function isFa(){ return POP.getState().lang === 'fa'; }
+    function qp(name){ return new URLSearchParams(location.search).get(name); }
+    var id = parseInt(qp('ep'), 10);
+    if (!id || id < 1 || id > POP.EPISODES.length) id = POP.highestUnlocked();
+
+    function buildPlayer(ep, fa){
+      if (ep.videoUrl){
+        var url = ep.videoUrl, embed = '';
+        var yt = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([\w-]{6,})/);
+        var vm = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+        if (yt) embed = '<iframe src="https://www.youtube.com/embed/'+yt[1]+'" frameborder="0" allow="encrypted-media; picture-in-picture" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe>';
+        else if (vm) embed = '<iframe src="https://player.vimeo.com/video/'+vm[1]+'" frameborder="0" allow="fullscreen; picture-in-picture" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe>';
+        else embed = '<video controls playsinline src="'+url+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000"></video>';
+        return '<div class="video-frame tall" id="player" style="overflow:hidden">'+embed+'</div>';
+      }
+      return '<div class="video-frame tall" id="player">' +
+        '<button class="play-btn" id="playBtn" aria-label="Play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>' +
+        '<div class="video-caption"><label style="display:flex;gap:.5rem;align-items:center;cursor:pointer"><input type="checkbox" id="ccToggle"> <span>' + (fa?'زیرنویس':'Captions') + '</span></label></div>' +
+      '</div>';
+    }
+
+    // Stella's full per-episode structure (Welcome → Video → Pause → Steps 1–4 → Questions → Spiritual)
+    // Bilingual: each field may have an ...En variant; falls back to Farsi when no translation exists.
+    function pick(rc, field, fa){ return (fa || !rc[field + 'En']) ? (rc[field] || '') : rc[field + 'En']; }
+
+    // Plain text (from the admin dashboard) → gentle HTML.
+    // Blank line = new paragraph; lines starting with "-"/"*" = bullets; "1." style = numbered.
+    function textToHtml(t){
+      if (!t) return '';
+      var e = String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      return e.split(/\n\s*\n/).map(function(block){
+        var lines = block.split('\n').filter(function(l){ return l.trim().length; });
+        if (!lines.length) return '';
+        var isUl = lines.every(function(l){ return /^\s*[-*•]\s+/.test(l); });
+        var isOl = lines.every(function(l){ return /^\s*[\d۰-۹]+[\.\)]\s*/.test(l); });
+        if (isUl) return '<ul>'+lines.map(function(l){ return '<li>'+l.replace(/^\s*[-*•]\s+/,'')+'</li>'; }).join('')+'</ul>';
+        if (isOl) return '<ol>'+lines.map(function(l){ return '<li>'+l.replace(/^\s*[\d۰-۹]+[\.\)]\s*/,'')+'</li>'; }).join('')+'</ol>';
+        return '<p>'+lines.join('<br>')+'</p>';
+      }).join('');
+    }
+    function listToHtml(t){
+      if (!t) return '';
+      var e = String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      var items = e.split(/\n+/).filter(function(l){ return l.trim().length; })
+        .map(function(l){ return '<li>'+l.replace(/^\s*[\d۰-۹]+[\.\)]\s*/,'')+'</li>'; });
+      return items.length ? '<ol>'+items.join('')+'</ol>' : '';
+    }
+
+    // Effective episode content = defaults (episodes.js) overridden by the admin dashboard.
+    function buildRc(id){
+      var base = (window.EP_RICH || {})[id];
+      var sessions = (window.POPContent && POPContent.getSessions()) || {};
+      var ov = sessions[id] || sessions[String(id)] || {};
+      var MAP = [
+        ['w','welcome',textToHtml], ['p','pause',textToHtml], ['s1','step1',textToHtml],
+        ['s2','step2',textToHtml], ['s4','step4',textToHtml], ['q','questions',listToHtml],
+        ['sp','spiritual',textToHtml], ['th','think',textToHtml]
+      ];
+      var anyAdmin = MAP.some(function(m){ return (ov[m[0]+'_bodyFa']||'').length || (ov[m[0]+'_bodyEn']||'').length; });
+      if (!base && !anyAdmin) return null;
+      var rc = {}; if (base) for (var k in base) rc[k] = base[k];
+      var STD = window.EP_STD || { fa:{}, en:{} };
+      MAP.forEach(function(m){
+        var pre = m[0], name = m[1], conv = m[2];
+        if (ov[pre+'_titleFa']) rc[name+'Title'] = ov[pre+'_titleFa'];
+        else if (rc[name+'Title'] == null) rc[name+'Title'] = STD.fa[name] || '';
+        if (ov[pre+'_titleEn']) rc[name+'TitleEn'] = ov[pre+'_titleEn'];
+        else if (rc[name+'TitleEn'] == null && STD.en[name]) rc[name+'TitleEn'] = STD.en[name];
+        if (ov[pre+'_bodyFa']) rc[name+'Html'] = conv(ov[pre+'_bodyFa']);
+        if (ov[pre+'_bodyEn']) rc[name+'HtmlEn'] = conv(ov[pre+'_bodyEn']);
+      });
+      rc.step3Title = rc.step3Title || STD.fa.step3;              rc.step3TitleEn = rc.step3TitleEn || STD.en.step3;
+      rc.step3LinkQuestions = rc.step3LinkQuestions || STD.fa.linkQuestions;   rc.step3LinkQuestionsEn = rc.step3LinkQuestionsEn || STD.en.linkQuestions;
+      rc.step3LinkSpiritual = rc.step3LinkSpiritual || STD.fa.linkSpiritual;   rc.step3LinkSpiritualEn = rc.step3LinkSpiritualEn || STD.en.linkSpiritual;
+      rc.askPearlLabel = rc.askPearlLabel || STD.fa.askPearl;     rc.askPearlLabelEn = rc.askPearlLabelEn || STD.en.askPearl;
+      rc.nextLabel = rc.nextLabel || STD.fa.next;                 rc.nextLabelEn = rc.nextLabelEn || STD.en.next;
+      if (ov.breatheCircle === '1') rc.breatheCircle = true;
+      else if (ov.breatheCircle === '0') rc.breatheCircle = false;
+      return rc;
+    }
+
+    function richSupportHtml(rc, id, hasNext, fa){
+      function v(f){ return pick(rc, f, fa); }
+      function has(f){ return !!(rc[f] || rc[f+'En']); }
+      var html = '';
+      if (has('pauseHtml')) html += '<div class="ep-step"><h3>' + v('pauseTitle') + '</h3>' + v('pauseHtml') + '</div>';
+      if (has('step1Html')) html += '<div class="ep-step"><h3>' + v('step1Title') + '</h3>' +
+          (rc.breatheCircle
+            ? '<div class="step1-flex"><div class="step1-body">' + v('step1Html') + '</div>' +
+              '<div class="breath breath-sm"><span>' + (fa ? 'دم… بازدم' : 'In… out') + '</span></div></div>'
+            : v('step1Html')) + '</div>';
+      if (has('step2Html')) html += '<div class="ep-step"><h3>' + v('step2Title') + '</h3>' + v('step2Html') + '</div>';
+      var hasQ = has('questionsHtml'), hasSp = has('spiritualHtml');
+      if (hasQ || hasSp){
+        html += '<div class="ep-step"><h3>' + v('step3Title') + '</h3><div class="step3-links">' +
+          (hasQ ? '<a class="a-questions" href="#questions">' + v('step3LinkQuestions') + '</a>' : '') +
+          (hasSp ? '<a class="a-spiritual" href="#spiritual">' + v('step3LinkSpiritual') + '</a>' : '') +
+        '</div></div>';
+      }
+      html += '<div class="ep-step"><h3>' + v('step4Title') + '</h3>' + v('step4Html') +
+          '<p class="muted" style="margin-top:1.1rem">' + v('askPearlLabel') + '</p>' +
+          '<button class="btn btn-soft" id="askPearlBtn"><img src="assets/img/logo-symbol.png" alt="" style="width:18px;height:auto"> ' + (fa ? 'گفت‌وگو با مروارید' : 'Talk with Pearl') + '</button>' +
+          (hasNext
+            ? '<p class="muted" style="margin-top:1.3rem">' + v('nextLabel') + '</p>' +
+              '<a class="btn btn-gold btn-lg" href="session.html?ep=' + (id+1) + '">' + (fa ? 'ویدیوی بعدی' : 'Next video') + '</a>'
+            : '') +
+        '</div>';
+      if (hasQ) html += '<div class="q-section" id="questions"><h3>' + v('questionsTitle') + '</h3>' + v('questionsHtml') + '</div>';
+      if (hasSp) html += '<div class="spirit-section" id="spiritual"><h3>' + v('spiritualTitle') + '</h3>' + v('spiritualHtml') +
+          (has('thinkHtml') ? '<div class="spirit-think"><h4>' + v('thinkTitle') + '</h4>' + v('thinkHtml') + '</div>' : '') +
+        '</div>';
+      return html;
+    }
+
+    function render(){
+      var fa = isFa();
+      var root = document.getElementById('sessionRoot');
+      var ep = POP.EPISODES[id-1];
+      var rc = buildRc(id);
+
+      // ----- LOCKED STATE -----
+      if (!POP.isUnlocked(id)){
+        var nextUp = POP.highestUnlocked();
+        root.innerHTML =
+          '<div class="locked-page fade-up in">' +
+            '<svg class="ic ic-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>' +
+            '<h1>' + (fa?'این گفت‌وگو هنوز پیشِ روی شماست':'This conversation is still ahead of you') + '</h1>' +
+            '<p class="muted">' + (fa
+                ? 'هر گفت‌وگو زمانی آشکار می‌شود که با گفت‌وگوی پیش از آن زمانی گذرانده باشید. این کار به شما کمک می‌کند بی‌شتاب و با فضای کافی برای تأمل پیش بروید.'
+                : 'Each conversation appears once you have spent time with the one before it. This helps you move unhurried, with room to reflect.') + '</p>' +
+            '<a class="btn btn-lg" href="session.html?ep=' + nextUp + '">' + (fa?'برو به گفت‌وگوی بعدیِ آماده':'Go to your next available conversation') + '</a>' +
+            '<p class="btn-note"><a href="journey.html">' + (fa?'بازگشت به مسیر':'Back to the journey') + '</a></p>' +
+          '</div>';
+        return;
+      }
+
+      POP.setLast(id);
+      var watched = POP.isWatched(id);
+      var title = fa ? ep.titleFa : ep.titleEn;
+      var desc  = fa ? ep.descFa : ep.descEn;
+      var epLabel = fa ? ('گفت‌وگوی ' + POP.toFa(ep.id)) : ('Conversation ' + ep.id);
+      var lenLabel = fa ? ('حدود ' + POP.toFa(ep.length) + ' دقیقه') : ('about ' + ep.length + ' min');
+
+      var hasNext = id < POP.EPISODES.length;
+
+      root.innerHTML =
+        '<div class="breadcrumb" style="justify-content:flex-start"><a href="journey.html">' + (fa?'مسیر':'The Journey') + '</a><span class="sep">/</span><span>' + epLabel + '</span></div>' +
+        '<div class="session-top">' +
+          '<div><span class="pill">' + epLabel + '</span><h1 style="margin:.6rem 0 .2rem">' + title + '</h1></div>' +
+        '</div>' +
+        '<div class="session-meta"><span>' + lenLabel + '</span>' + (watched ? '<span class="pill"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>'+(fa?'تماشا شده':'Watched')+'</span>' : '') + '</div>' +
+        (rc && (rc.welcomeHtml || rc.welcomeHtmlEn)
+          ? '<div class="ep-welcome"><h2>' + pick(rc, 'welcomeTitle', fa) + '</h2>' + pick(rc, 'welcomeHtml', fa) + '</div>'
+          : '<p class="muted" style="margin-top:1rem">' + desc + '</p>') +
+
+        // PLAYER (uses the content-manager's video URL when set, else a placeholder)
+        '<div class="session-player">' + buildPlayer(ep, fa) + '</div>' +
+
+        // GATE: supporting material hidden until watched
+        '<div class="reveal-gate">' +
+          '<div id="watchGate" class="locked-overlay" ' + (watched?'hidden':'') + '>' +
+            '<p style="margin:.2rem 0">' + (fa?'برای فضای آرام و بدون شلوغی، محتوای پشتیبان و گام بعدی پس از تماشای این گفت‌وگو ظاهر می‌شوند.':'For a calm, uncluttered space, the supporting material and next step appear after you have watched this conversation.') + '</p>' +
+            '<button class="btn" id="finishBtn" style="margin-top:.8rem">' + (fa?'تماشای این گفت‌وگو را تمام کردم':'I have finished watching') + '</button>' +
+          '</div>' +
+
+          '<div class="support" id="support" ' + (watched?'':'hidden') + '>' +
+          (rc ? richSupportHtml(rc, id, hasNext, fa) : (
+            '<div class="takeaways" style="margin-top:1.6rem"><h3>' + (fa?'نکته‌های کلیدی':'Key takeaways') + '</h3><ul>' +
+              '<li>' + (fa?'یک یادآوری آرام از این گفت‌وگو. (نمونه)':'A gentle reminder from this conversation. (placeholder)') + '</li>' +
+              '<li>' + (fa?'چیزی برای همراه‌داشتن در طول روز. (نمونه)':'Something to carry with you today. (placeholder)') + '</li>' +
+            '</ul></div>' +
+
+            '<h3 style="margin-top:1.8rem">' + (fa?'پس از این گفت‌وگو':'After this conversation') + '</h3>' +
+            '<div class="support-links">' +
+              '<a class="support-link" href="grounding.html"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h11a3 3 0 1 0-3-3M3 16h14a3 3 0 1 1-3 3M3 12h7"/></svg><span><b>' + (fa?'آرام‌سازی و تنظیم':'Calming & regulation') + '</b><small>' + (fa?'تمرین‌های کوتاه برای آرام شدن':'short exercises to settle') + '</small></span></a>' +
+              '<a class="support-link" href="#worksheet"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6v12M15 6v12"/></svg><span><b>' + (fa?'مکث و تأمل':'Pause & reflect') + '</b><small>' + (fa?'پرسش‌ها و تمرین‌ها':'questions & activations') + '</small></span></a>' +
+              '<a class="support-link" href="about.html#faq"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v14M6 11l6 6 6-6M5 21h14"/></svg><span><b>' + (fa?'عمیق‌تر شدن':'Go deeper') + '</b><small>' + (fa?'منابع بیشتر':'further resources') + '</small></span></a>' +
+            '</div>' +
+
+            // WORKSHEET
+            '<div class="worksheet" id="worksheet"><div><b>' + (fa?'کاربرگ «پرسش‌ها و تمرین‌ها»':'“Questions & Activations” worksheet') + '</b><br><small class="muted">' + (fa?'برای تأمل و تمرین دانلود کنید':'download for reflection & practice') + '</small></div>' +
+              '<a class="btn btn-soft" href="' + (ep.worksheetUrl || 'assets/files/worksheet-sample.txt') + '" download target="_blank"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 11l5 5 5-5M5 21h14"/></svg>' + (fa?'دانلود کاربرگ':'Download worksheet') + '</a>' +
+            '</div>' +
+
+            // NEXT
+            '<div class="next-block">' +
+              '<p class="muted">' + (fa?'اگر این گفت‌وگو برایتان معنادار بود و زمانی برای تأمل گذاشتید، شاید بخواهید با گفت‌وگوی بعدی ادامه دهید.':'If this conversation was meaningful to you, and you have taken some time to reflect, you may want to continue with the next one.') + '</p>' +
+              (hasNext
+                ? '<a class="btn btn-lg btn-gold" href="session.html?ep=' + (id+1) + '">' + (fa?'گفت‌وگوی بعدی':'Next conversation') + ' <svg class="ic next-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>'
+                : '<p>' + (fa?'به پایان این مسیر رسیده‌اید. با مهربانی با خودتان باشید.':'You have reached the end of this path. Be gentle with yourself.') + '</p>') +
+            '</div>'
+          )) +
+          '</div>' +
+        '</div>';
+
+      // arrow mirroring for RTL
+      var arrow = root.querySelector('.next-arrow');
+      if (arrow && fa) arrow.style.transform = 'scaleX(-1)';
+
+      // interactions
+      var ap = document.getElementById('askPearlBtn');
+      if (ap) ap.addEventListener('click', function(){
+        var p = document.getElementById('kairosPanel');
+        if (p) p.classList.add('open');
+      });
+      var playBtn = document.getElementById('playBtn');
+      if (playBtn) playBtn.addEventListener('click', function(){
+        var p = document.getElementById('player');
+        p.querySelector('.play-btn').style.display = 'none';
+        var note = document.createElement('div');
+        note.style.cssText = 'color:#fff;text-align:center;position:absolute;inset:0;display:grid;place-items:center';
+        note.innerHTML = '<div><p style="font-size:2rem;margin:0">▶</p><p class="tiny">' + (fa?'در حال پخش (نمونه)':'Playing (placeholder)') + '</p></div>';
+        p.appendChild(note);
+      });
+
+      var finishBtn = document.getElementById('finishBtn');
+      if (finishBtn) finishBtn.addEventListener('click', function(){
+        POP.markWatched(id);
+        document.getElementById('watchGate').setAttribute('hidden','');
+        var sup = document.getElementById('support');
+        sup.removeAttribute('hidden');
+        sup.scrollIntoView({ behavior:'smooth', block:'start' });
+      });
+    }
+
+    render();
+    document.addEventListener('pop:lang', render);
+  };
+</script>
+</body>
+</html>

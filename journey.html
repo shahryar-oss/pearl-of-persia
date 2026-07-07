@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مسیر — Pearl of Persia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opt,wght@0,6..96,400;0,6..96,500;1,6..96,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css?v=36">
+</head>
+<body class="lang-fa" dir="rtl">
+<div id="site-header"></div>
+
+<main>
+  <div class="page-head soft-bg">
+    <span class="deco-blob b-sage" style="width:260px;height:260px;top:-80px;inset-inline-start:-60px"></span>
+    <span class="deco-blob b-blush" style="width:200px;height:200px;top:-40px;inset-inline-end:4%"></span>
+    <span class="botanical" style="width:90px;height:90px;top:18px;inset-inline-end:8%;opacity:.5"><svg viewBox="0 0 120 120"><path d="M60 118 C60 80 60 50 62 18"/><path d="M61 46 C40 42 26 50 20 66 C42 66 55 60 61 46Z"/><path d="M62 70 C82 64 96 70 102 86 C80 88 68 82 62 70Z"/></svg></span>
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html" data-fa="خانه" data-en="Home">خانه</a><span class="sep">/</span><span data-fa="مسیر" data-en="The Journey">مسیر</span></div>
+      <p class="eyebrow" data-edit="journey.head.eyebrow" data-fa="موضوع‌هایی در طول مسیر" data-en="Themes along the journey">موضوع‌هایی در طول مسیر</p>
+      <h1 data-edit="journey.head.title" data-fa="مسیر شما" data-en="Your Journey">مسیر شما</h1>
+      <p class="muted" data-edit="journey.head.sub" data-fa="این یک فهرست مرحله‌ای نیست؛ گذر از منظره‌های گوناگون است. مسیر شما از امنیت می‌گذرد به سوی آگاهی، شناخت، رابطه‌ها، شرم، هویت و شفا. عجله‌ای نیست."
+         data-en="This is not a checklist of stages; it is a passage through different landscapes. Your path moves from Safety toward Awareness, Understanding, Relationships, Shame, Identity, and Healing. There is no rush.">این یک فهرست مرحله‌ای نیست؛ گذر از منظره‌های گوناگون است.</p>
+    </div>
+  </div>
+
+  <section>
+    <div class="container">
+      <div class="narrow" style="margin-bottom:2.4rem">
+        <div class="resume-bar fade-up" id="resumeBar"></div>
+      </div>
+
+      <div class="journey-wrap">
+        <div class="areas" id="areas"><!-- rendered by JS --></div>
+      </div>
+
+      <div class="center" style="margin-top:2.5rem">
+        <a class="btn btn-soft" href="grounding.html" data-edit="journey.btnGrounding" data-fa="آرامش و حمایت" data-en="Grounding & Support">آرامش و حمایت</a>
+        <p class="btn-note" data-fa="هر زمان احساس سنگینی کردید، می‌توانید اینجا بایستید و نفس بکشید."
+           data-en="Whenever things feel heavy, you can pause here and breathe.">هر زمان احساس سنگینی کردید، می‌توانید اینجا بایستید و نفس بکشید.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="site-footer"></div>
+<div id="site-kairos"></div>
+<script src="assets/js/content.js?v=36"></script>
+<script src="assets/js/app.js?v=36"></script>
+<script>
+  window.popPageInit = function(){
+    function isFa(){ return POP.getState().lang === 'fa'; }
+
+    function renderResume(){
+      var fa = isFa(); var s = POP.getState();
+      var bar = document.getElementById('resumeBar');
+      if (s.last){
+        var e = POP.EPISODES[s.last-1];
+        var t = fa ? e.titleFa : e.titleEn;
+        bar.innerHTML =
+          '<div><span class="label">' + (fa?'بازگشت به آخرین نشست شما':'Return to your last session') + '</span><strong>' + t + '</strong></div>' +
+          '<a class="btn" href="session.html?ep=' + s.last + '">' + (fa?'ادامه از همان‌جا':'Continue where you left off') + '</a>';
+      } else {
+        bar.innerHTML =
+          '<div><span class="label">' + (fa?'آمادهٔ شروع هستید؟':'Ready to begin?') + '</span><strong>' + (fa?'سفر خود را آغاز کنید':'Start your journey') + '</strong></div>' +
+          '<a class="btn" href="session.html?ep=1">' + (fa?'شروع مسیر':'Start your journey') + '</a>';
+      }
+    }
+
+    function renderAreas(){
+      var fa = isFa();
+      var unlocked = POP.highestUnlocked();
+      var html = '';
+      POP.CLUSTERS.forEach(function(c, idx){
+        var start = c.range[0], end = c.range[1];
+        var reached = unlocked >= start;            // user has arrived at (or passed) this area
+        var isCurrent = unlocked >= start && unlocked <= end;
+        // an area one step beyond the current stays veiled; further ones too
+        var veiled = !reached;
+
+        var name = fa ? c.fa : c.en;
+        var desc = fa ? c.descFa : c.descEn;
+        var rangeLabel = fa
+          ? ('گفت‌وگوهای ' + POP.toFa(start) + '–' + POP.toFa(end))
+          : ('Conversations ' + start + '–' + end);
+
+        var sessions = '';
+        if (reached){
+          for (var n = start; n <= end; n++){
+            var e = POP.EPISODES[n-1];
+            var t = fa ? e.titleFa : e.titleEn;
+            if (POP.isWatched(n)){
+              sessions += '<a class="sess-chip done" href="session.html?ep='+n+'"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>'+t+'</a>';
+            } else if (POP.isUnlocked(n)){
+              sessions += '<a class="sess-chip" href="session.html?ep='+n+'">'+t+'</a>';
+            } else {
+              // within a reached area, not-yet-unlocked sessions are simply not shown yet
+              // (they "appear" only when you arrive) — show a single soft placeholder once
+            }
+          }
+          // soft hint that more will appear within this area
+          if (isCurrent && end > unlocked){
+            sessions += '<span class="sess-chip locked"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="16" r="1.4"/><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>'+(fa?'گفت‌وگوهای بعدی وقتی آماده باشید آشکار می‌شوند':'more conversations appear as you go')+'</span>';
+          }
+        }
+
+        html +=
+          '<div class="area '+(reached?'reached ':'')+(isCurrent?'current ':'')+(veiled?'veiled':'')+'">' +
+            '<div class="area-marker">' +
+              '<div class="area-dot">' + (reached
+                  ? '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 19c0-8 6-14 14-14 0 8-6 14-14 14ZM5 19c4-4 7-7 9-9"/></svg>'
+                  : '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="16" r="1.4"/><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>') +
+              '</div>' +
+              '<div class="area-line"></div>' +
+            '</div>' +
+            '<div class="area-body">' +
+              '<span class="area-range">' + rangeLabel + '</span>' +
+              '<h3>' + name + '</h3>' +
+              '<p class="muted">' + desc + '</p>' +
+              (veiled
+                ? '<p class="veil-hint">' + (fa?'این بخش از مسیر زمانی آشکار می‌شود که به آن برسید.':'This part of the path reveals itself when you arrive.') + '</p>'
+                : '<div class="area-sessions">' + sessions + '</div>') +
+            '</div>' +
+          '</div>';
+      });
+      document.getElementById('areas').innerHTML = html;
+    }
+
+    function renderAll(){ renderResume(); renderAreas(); }
+    renderAll();
+    document.addEventListener('pop:lang', renderAll);
+  };
+</script>
+</body>
+</html>

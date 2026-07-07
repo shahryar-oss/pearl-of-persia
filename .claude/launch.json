@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "pearl",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "4173", "--directory", "/Users/danny/Desktop/projects/Pearl of Persia Website"],
+      "port": 4173
+    }
+  ]
+}

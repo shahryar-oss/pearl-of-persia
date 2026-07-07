@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ورود مدیریت — Pearl of Persia</title>
+<link rel="stylesheet" href="../assets/css/admin.css?v=36">
+</head>
+<body dir="rtl">
+<div class="login-wrap">
+  <form class="login-card" id="loginForm">
+    <img class="logo" src="../assets/img/logo-symbol.png" alt="Pearl of Persia">
+    <h1>پنل مدیریت محتوا</h1>
+    <p class="muted tiny" style="margin-top:-.3rem">Pearl of Persia — Content Dashboard</p>
+    <div class="field" style="margin-top:1.3rem; text-align:start">
+      <label for="pass">گذرواژهٔ ورود — Passphrase</label>
+      <input type="password" id="pass" autocomplete="off" placeholder="••••••">
+    </div>
+    <button class="btn btn-gold" type="submit" style="width:100%; justify-content:center">ورود — Sign in</button>
+    <p id="err" class="tiny" style="color:#b5453a; min-height:1.1em; margin:.7rem 0 0"></p>
+    <div class="notice notice-warn tiny" style="margin-top:1rem; text-align:start">
+      این یک ورود نمایشی است (نه امنیت واقعی). گذرواژهٔ نمونه: <span class="kbd">pearl</span><br>
+      <span class="muted">A demo gate only — real accounts &amp; security live on the server in production.</span>
+    </div>
+  </form>
+</div>
+<script>
+  // PROTOTYPE demo gate — NOT real authentication.
+  var DEMO_PASS = 'pearl';
+  document.getElementById('loginForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var v = document.getElementById('pass').value.trim();
+    if (v === DEMO_PASS){
+      sessionStorage.setItem('pop_admin', '1');
+      location.href = 'dashboard.html';
+    } else {
+      document.getElementById('err').textContent = 'گذرواژه نادرست است. (نمونه: pearl)';
+    }
+  });
+  if (sessionStorage.getItem('pop_admin') === '1') location.href = 'dashboard.html';
+</script>
+</body>
+</html>
