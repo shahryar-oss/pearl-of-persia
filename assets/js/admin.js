@@ -526,6 +526,7 @@
               '<button class="btn btn-soft btn-sm" data-tkst="in_progress" data-tkid="'+esc(t.id)+'">در حال انجام</button>'+
               '<button class="btn btn-soft btn-sm" data-tkst="resolved" data-tkid="'+esc(t.id)+'">انجام شد</button>'+
               '<button class="btn btn-soft btn-sm" data-tkst="open" data-tkid="'+esc(t.id)+'">بازکردن دوباره</button>'+
+              '<button class="btn btn-soft btn-sm" data-tkdel="'+esc(t.id)+'" style="color:#a33; margin-inline-start:auto">حذف</button>'+
             '</div>'+
           '</div></details>';
       }).join('');
@@ -534,6 +535,14 @@
         b.addEventListener('click', function(){
           fetch('../api/tickets/'+b.getAttribute('data-tkid')+'/status', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({status:b.getAttribute('data-tkst')}) })
             .then(function(){ loadTickets(); });
+        });
+      });
+      // delete
+      [].forEach.call(box.querySelectorAll('[data-tkdel]'), function(b){
+        b.addEventListener('click', function(){
+          var id = b.getAttribute('data-tkdel');
+          if (!confirm('این تیکت («'+id+'») برای همیشه حذف شود؟')) return;
+          fetch('../api/tickets/'+id, { method:'DELETE' }).then(function(){ loadTickets(); });
         });
       });
       // replies

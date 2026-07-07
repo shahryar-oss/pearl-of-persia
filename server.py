@@ -221,6 +221,20 @@ class Handler(SimpleHTTPRequestHandler):
 
         return self.send_json({"error": "unknown endpoint"}, 404)
 
+    def do_DELETE(self):
+        path = self.path.split("?")[0]
+        if self._gated(path) and not self._auth_ok():
+            return self._auth_challenge()
+        m = re.match(r"^/api/tickets/(TCK-\d+)$", path)
+        if m:
+            import shutil
+            d = ticket_dir(m.group(1))
+            if os.path.isdir(d):
+                with LOCK: shutil.rmtree(d, ignore_errors=True)
+                return self.send_json({"ok": True})
+            return self.send_json({"error": "not found"}, 404)
+        return self.send_json({"error": "unknown endpoint"}, 404)
+
 if __name__ == "__main__":
     os.makedirs(TICKETS, exist_ok=True)
     os.chdir(ROOT)
