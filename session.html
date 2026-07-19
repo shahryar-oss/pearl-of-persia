@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opt,wght@0,6..96,400;0,6..96,500;1,6..96,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=37">
+<link rel="stylesheet" href="assets/css/style.css?v=38">
 </head>
 <body class="lang-fa" dir="rtl">
 <div id="site-header"></div>
@@ -20,9 +20,9 @@
 
 <div id="site-footer"></div>
 <div id="site-kairos"></div>
-<script src="assets/js/content.js?v=37"></script>
-<script src="assets/js/episodes.js?v=37"></script>
-<script src="assets/js/app.js?v=37"></script>
+<script src="assets/js/content.js?v=38"></script>
+<script src="assets/js/episodes.js?v=38"></script>
+<script src="assets/js/app.js?v=38"></script>
 <script>
   window.popPageInit = function(){
     function isFa(){ return POP.getState().lang === 'fa'; }
@@ -117,12 +117,17 @@
               '<div class="breath breath-sm"><span>' + (fa ? 'دم… بازدم' : 'In… out') + '</span></div></div>'
             : v('step1Html')) + '</div>';
       if (has('step2Html')) html += '<div class="ep-step"><h3>' + v('step2Title') + '</h3>' + v('step2Html') + '</div>';
+      // Step 3 — Stella (14 Jul 2026): both reflection sections expand IN PLACE
+      // (accordion), so the page doesn't jump and Step 4 stays visible.
       var hasQ = has('questionsHtml'), hasSp = has('spiritualHtml');
+      var chev = '<svg class="acc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M6 9l6 6 6-6"/></svg>';
       if (hasQ || hasSp){
-        html += '<div class="ep-step"><h3>' + v('step3Title') + '</h3><div class="step3-links">' +
-          (hasQ ? '<a class="a-questions" href="#questions">' + v('step3LinkQuestions') + '</a>' : '') +
-          (hasSp ? '<a class="a-spiritual" href="#spiritual">' + v('step3LinkSpiritual') + '</a>' : '') +
-        '</div></div>';
+        html += '<div class="ep-step"><h3>' + v('step3Title') + '</h3>' +
+          (hasQ ? '<details class="ep-acc acc-questions"><summary>' + v('questionsTitle') + chev + '</summary><div class="acc-body">' + v('questionsHtml') + '</div></details>' : '') +
+          (hasSp ? '<details class="ep-acc acc-spiritual"><summary>' + v('spiritualTitle') + chev + '</summary><div class="acc-body">' + v('spiritualHtml') +
+              (has('thinkHtml') ? '<div class="spirit-think"><h4>' + v('thinkTitle') + '</h4>' + v('thinkHtml') + '</div>' : '') +
+            '</div></details>' : '') +
+        '</div>';
       }
       html += '<div class="ep-step"><h3>' + v('step4Title') + '</h3>' + v('step4Html') +
           '<p class="muted" style="margin-top:1.1rem">' + v('askPearlLabel') + '</p>' +
@@ -132,11 +137,37 @@
               '<a class="btn btn-gold btn-lg" href="session.html?ep=' + (id+1) + '">' + (fa ? 'ویدیوی بعدی' : 'Next video') + '</a>'
             : '') +
         '</div>';
-      if (hasQ) html += '<div class="q-section" id="questions"><h3>' + v('questionsTitle') + '</h3>' + v('questionsHtml') + '</div>';
-      if (hasSp) html += '<div class="spirit-section" id="spiritual"><h3>' + v('spiritualTitle') + '</h3>' + v('spiritualHtml') +
-          (has('thinkHtml') ? '<div class="spirit-think"><h4>' + v('thinkTitle') + '</h4>' + v('thinkHtml') + '</div>' : '') +
-        '</div>';
+      html += supportHtml(fa);
       return html;
+    }
+
+    // "Need More Support?" — Stella's closing support block (14 Jul 2026),
+    // shown once at the end of every episode page, after the next-video step.
+    // The pastors line links to the Connection page until she supplies
+    // specific contact information.
+    function supportHtml(fa){
+      if (fa) return '' +
+        '<div class="more-support">' +
+          '<h3>اگر به حمایت بیشتری نیاز دارید</h3>' +
+          '<p>این ویدیوها برای همراهی شما در مسیر شفا و ترمیم تهیه شده‌اند، اما جایگزین درمان یا مراقبت حرفه‌ای نیستند.</p>' +
+          '<p>در ادامهٔ این مسیر، با خودتان صبور و مهربان باشید. با سرعتی که برای شما مناسب است پیش بروید و در حالی که قدم‌هایی شجاعانه به سوی شفا برمی‌دارید، از منابع و خدمات حمایتی موجود نیز استفاده کنید.</p>' +
+          '<p>ما باور داریم که خدا برای شما نیکویی، امید و آینده‌ای روشن در نظر گرفته است، و شاید آزادی از دردهایی که با خود حمل کرده‌اید، بخشی از این هدیه باشد.</p>' +
+          '<p><b>اگر مایل باشید، می‌توانید:</b></p>' +
+          '<ul><li><a href="connection.html">با یکی از شبانان یا اعضای تیم همراهی ما گفتگو کنید</a></li></ul>' +
+          '<blockquote class="verse">«زیرا من نقشه‌هایی را که برای شما دارم می‌دانم، نقشه‌هایی برای سلامتی و نه آسیب، برای بخشیدن امید و آینده‌ای روشن.»' +
+            '<span class="verse-ref">ارمیا ۲۹:۱۱</span></blockquote>' +
+        '</div>';
+      return '' +
+        '<div class="more-support">' +
+          '<h3>Need More Support?</h3>' +
+          '<p>These videos are intended to support your healing journey, but they are not a substitute for professional care.</p>' +
+          '<p>As you continue on this journey, be patient and gentle with yourself. Move at a pace that feels right for you, and don’t hesitate to make use of the support and resources available as you take courageous steps toward healing.</p>' +
+          '<p>We believe God has good plans for you, and that freedom from the pain you have carried may be part of the hope He has for your life.</p>' +
+          '<p><b>If you would like additional support, you may also:</b></p>' +
+          '<ul><li><a href="connection.html">Talk with one of our pastors</a></li></ul>' +
+          '<blockquote class="verse">“For I know the plans I have for you,” declares the Lord, “plans to prosper you and not to harm you, plans to give you hope and a future.”' +
+            '<span class="verse-ref">Jeremiah 29:11</span></blockquote>' +
+        '</div>';
     }
 
     function render(){
@@ -164,6 +195,7 @@
       POP.setLast(id);
       var watched = POP.isWatched(id);
       var title = fa ? ep.titleFa : ep.titleEn;
+      var sub   = fa ? ep.subFa : ep.subEn;
       var desc  = fa ? ep.descFa : ep.descEn;
       var epLabel = fa ? ('گفت‌وگوی ' + POP.toFa(ep.id)) : ('Conversation ' + ep.id);
       var lenLabel = fa ? ('حدود ' + POP.toFa(ep.length) + ' دقیقه') : ('about ' + ep.length + ' min');
@@ -173,12 +205,13 @@
       root.innerHTML =
         '<div class="breadcrumb" style="justify-content:flex-start"><a href="journey.html">' + (fa?'مسیر':'The Journey') + '</a><span class="sep">/</span><span>' + epLabel + '</span></div>' +
         '<div class="session-top">' +
-          '<div><span class="pill">' + epLabel + '</span><h1 style="margin:.6rem 0 .2rem">' + title + '</h1></div>' +
+          '<div><span class="pill">' + epLabel + '</span><h1 style="margin:.6rem 0 .2rem">' + title + '</h1>' +
+            (sub ? '<p class="ep-sub">' + sub + '</p>' : '') + '</div>' +
         '</div>' +
         '<div class="session-meta"><span>' + lenLabel + '</span>' + (watched ? '<span class="pill"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>'+(fa?'تماشا شده':'Watched')+'</span>' : '') + '</div>' +
         (rc && (rc.welcomeHtml || rc.welcomeHtmlEn)
           ? '<div class="ep-welcome"><h2>' + pick(rc, 'welcomeTitle', fa) + '</h2>' + pick(rc, 'welcomeHtml', fa) + '</div>'
-          : '<p class="muted" style="margin-top:1rem">' + desc + '</p>') +
+          : (desc ? '<p class="muted" style="margin-top:1rem">' + desc + '</p>' : '')) +
 
         // PLAYER (uses the content-manager's video URL when set, else a placeholder)
         '<div class="session-player">' + buildPlayer(ep, fa) + '</div>' +
@@ -215,7 +248,8 @@
               (hasNext
                 ? '<a class="btn btn-lg btn-gold" href="session.html?ep=' + (id+1) + '">' + (fa?'گفت‌وگوی بعدی':'Next conversation') + ' <svg class="ic next-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>'
                 : '<p>' + (fa?'به پایان این مسیر رسیده‌اید. با مهربانی با خودتان باشید.':'You have reached the end of this path. Be gentle with yourself.') + '</p>') +
-            '</div>'
+            '</div>' +
+            supportHtml(fa)
           )) +
           '</div>' +
         '</div>';

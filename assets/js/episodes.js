@@ -97,3 +97,40 @@ window.EP_STD = {
     next: 'And whenever you are ready, you can watch the next video from here.'
   }
 };
+
+/* ---------------------------------------------------------------
+   Final episode titles — Stella's documents (14 Jul 2026):
+   "تیترها.docx" (Farsi) + "Titles - Final.docx" (English).
+   Ep 2 uses her preferred longer Farsi title (short fallback:
+   «امید در دلِ تنهایی» if layout ever needs it). Ep 13's Farsi and
+   English subtitles differ between her two documents; both kept as
+   authored, pending her confirmation. sub = subtitle (optional).
+   --------------------------------------------------------------- */
+window.EP_TITLES = {
+  1:  { fa: 'یافتن آرامش در دلِ ترس و نبود امنیت', en: 'Finding Calm in the Midst of Fear and Uncertainty' },
+  2:  { fa: 'امید در دلِ تنهایی و فرسودگی احساسی', en: 'Finding Hope in Times of Loneliness and Emotional Exhaustion' },
+  3:  { fa: 'تروما و بدن در حالت بقا – ۱', subFa: 'چرا واکنش‌ها‌تون قابل درک‌اند', en: 'Trauma and the Body, Part 1', subEn: 'Why Your Reactions Make Sense' },
+  4:  { fa: 'تروما و بدن در حالت بقا – ۲', subFa: 'چه چیزهایی به بدن کمک می‌کنند', en: 'Trauma and the Body, Part 2', subEn: 'What Helps the Body Feel Safe' },
+  5:  { fa: 'شرمِ گره‌خورده به هویت – ۱', subFa: 'باری که هیچ‌وقت مال شما نبود', en: 'Shame Bound to Identity, Part 1', subEn: 'A Burden That Was Never Yours' },
+  6:  { fa: 'شرمِ گره‌خورده به هویت – ۲', subFa: 'شرم ابزاری برای کنترل', en: 'Shame Bound to Identity, Part 2', subEn: 'Shame as a Tool for Control' },
+  7:  { fa: 'شرمِ گره‌خورده به هویت – ۳', subFa: 'رهایی از شرمی که مال شما نیست', en: 'Shame Bound to Identity, Part 3', subEn: 'Freedom from Shame That Was Never Yours' },
+  8:  { fa: 'آسیب مذهبی و رابطه با خدا – ۱', subFa: 'نام بردن آسیب‌های مذهبی بدون کنار گذاشتن خدا', en: 'Religious Harm and God, Part 1', subEn: 'Naming Religious Harm Without Abandoning God' },
+  9:  { fa: 'آسیب مذهبی و رابطه با خدا – ۲', subFa: 'عیسی: مردی که زن‌ها را با شرم تعریف نکرد', en: 'Religious Harm and God, Part 2', subEn: 'Jesus: A Man Who Did Not Define Women by Shame' },
+  10: { fa: 'آسیب مذهبی و رابطه با خدا – ۳', subFa: 'ایمان پس از سرخوردگی مذهبی', en: 'Religious Harm and God, Part 3', subEn: 'Faith After Disillusionment' },
+  11: { fa: 'فرار از درد و میل به ناپدید شدن', subFa: 'وقتی دوام آوردن سخت می‌شه', en: 'Escaping Pain and the Desire to Disappear', subEn: 'When Enduring Feels Too Hard' },
+  12: { fa: 'موج‌های درد', subFa: 'چطور در میان موج‌ها دوام بیاریم', en: 'Waves of Pain', subEn: 'How to Endure the Waves' },
+  13: { fa: 'خدا، دین و ارزش زن – ۱', subFa: 'وقتی امن نبود که خودت باشی', en: "God, Religion, and Women's Worth, Part 1", subEn: 'Childhood Conditioning and Survival Roles' },
+  14: { fa: 'خدا، دین و ارزش زن – ۲', subFa: 'الگوهای بقا در رابطه‌ها', en: "God, Religion, and Women's Worth, Part 2", subEn: 'Survival Patterns in Relationships' },
+  15: { fa: 'رابطه، امنیت و الگوهای بقا – ۱', subFa: 'وابستگی‌هایی که برای بقا شکل گرفتند', en: 'Relationships, Safety and Survival Patterns, Part 1', subEn: 'Attachment as Survival' },
+  16: { fa: 'رابطه، امنیت و الگوهای بقا – ۲', subFa: 'بهای گفتن «بله» و «نه»', en: 'Relationships, Safety and Survival Patterns, Part 2', subEn: 'The Cost of Saying “No” or “Yes”' },
+  17: { fa: 'خیانت، بی‌اعتمادی و آسیب اخلاقی – ۱', subFa: 'زندگی پس از خیانت', en: 'Betrayal, Mistrust, and Moral Injury, Part 1', subEn: 'Living with Betrayal' },
+  18: { fa: 'خیانت، بی‌اعتمادی و آسیب اخلاقی – ۲', subFa: 'شک به صدای درون', en: 'Betrayal, Mistrust, and Moral Injury, Part 2', subEn: 'Losing Trust in Your Inner Voice' },
+  19: { fa: 'خشم، عصبانیت و فریاد برای عدالت – ۱', subFa: 'خشم؛ واکنشی انسانی به بی‌عدالتی', en: 'Rage, Anger, and the Cry for Justice, Part 1', subEn: 'Anger as a Human Response to Injustice' },
+  20: { fa: 'خشم، عصبانیت و فریاد برای عدالت – ۲', subFa: 'وقتی خشم جایی برای رفتن ندارد', en: 'Rage, Anger, and the Cry for Justice, Part 2', subEn: 'When Anger Has Nowhere to Go' },
+  21: { fa: 'مرزهای سالم در رابطه‌های ناامن', subFa: 'حفظِ خود در محیط‌های کنترل‌گر', en: 'Healthy Boundaries in Unsafe or Controlling Environments' },
+  22: { fa: 'گذشتهٔ جنسی، شرم و ارزشمندی – ۱', subFa: 'ارزش انسان فراتر از گذشته‌ٔ اوست', en: 'Sexual History, Shame, and Worth, Part 1', subEn: 'Your Worth Is Greater Than Your Past' },
+  23: { fa: 'گذشتهٔ جنسی، شرم و ارزشمندی – ۲', subFa: 'بدن، تروما و بازگشتِ احساس امنیت', en: 'Sexual History, Shame, and Worth, Part 2', subEn: 'The Body, Trauma, and Returning to Safety' },
+  24: { fa: 'پیدا کردن صدا برای تروما', subFa: 'چه وقت حرف بزنیم، و چه وقت نه', en: 'Finding Voice for Trauma', subEn: 'When, How, and When Not To' },
+  25: { fa: 'زندگی با غمِ ناتمام و سؤال‌های بی‌پاسخ', subFa: 'غم، ابهام و ادامهٔ زندگی', en: 'Living with Unfinished Grief and Unanswered Questions' },
+  26: { fa: 'ارزش و هویتِ واقعی', subFa: 'فراتر از بقا و نقش‌هایی که بر دوش ما گذاشته شده', en: 'True Worth and Identity', subEn: 'Beyond Survival and the Roles Placed on Us' }
+};

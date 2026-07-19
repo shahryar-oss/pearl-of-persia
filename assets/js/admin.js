@@ -215,15 +215,22 @@
   }
 
   /* ---------- SESSIONS ---------- */
+  // Stella's final 6 groups (14 Jul 2026) — keep in sync with app.js CLUSTERS
   var CLUSTERS = [
-    { fa:'پایه‌ها', en:'Foundations', range:[1,4] },
-    { fa:'شناختِ خود', en:'Understanding Yourself', range:[5,10] },
-    { fa:'وقتی درد سنگین می‌شود', en:'When the Pain Feels Too Much', range:[11,12] },
-    { fa:'رابطه‌ها و مرزها', en:'Relationships & Boundaries', range:[13,21] },
-    { fa:'شرم، هویت و شفا', en:'Shame, Identity & Healing', range:[22,26] }
+    { fa:'مبانی: امنیت، آرامش، و معنا', en:'Foundations: Safety, Calm, and Meaning', range:[1,2] },
+    { fa:'درک آنچه در درون ما در حال رخ دادن است', en:'Understanding What Is Happening Inside Us', range:[3,10] },
+    { fa:'وقتی درد بیش از حد سنگین می‌شود', en:'When the Pain Feels Too Much', range:[11,12] },
+    { fa:'رابطه‌ها زیر فشار', en:'Relationships Under Pressure', range:[13,23] },
+    { fa:'یکپارچه‌سازی تروما', en:'Trauma Integration', range:[24,25] },
+    { fa:'هویت، ارزشمندی، و ادامه دادن زندگی', en:'Identity, Worth, and Continuing to Live', range:[26,26] }
   ];
   function clusterOf(n){ for (var i=0;i<CLUSTERS.length;i++){ if (n>=CLUSTERS[i].range[0] && n<=CLUSTERS[i].range[1]) return CLUSTERS[i]; } return CLUSTERS[0]; }
-  function sessDefault(n){ return { titleFa:'گفت‌وگوی '+toFa(n), titleEn:'Conversation '+n, descFa:'', descEn:'', length:12+(n%4), videoUrl:'', worksheetUrl:'' }; }
+  function sessDefault(n){
+    var t = (window.EP_TITLES || {})[n] || {};
+    return { titleFa: t.fa || ('گفت‌وگوی '+toFa(n)), titleEn: t.en || ('Conversation '+n),
+             subFa: t.subFa || '', subEn: t.subEn || '',
+             descFa:'', descEn:'', length:12+(n%4), videoUrl:'', worksheetUrl:'' };
+  }
 
   // Maps a form section key → the EP_RICH field base it mirrors.
   var SEC_BASE = { w:'welcome', p:'pause', s1:'step1', s2:'step2', s4:'step4', q:'questions', sp:'spiritual', th:'think' };
@@ -283,6 +290,10 @@
       '<div class="row2">'+
         '<div class="field"><label>عنوان قسمت (فارسی)</label><input type="text" data-s="titleFa" value="'+esc(o.titleFa!=null?o.titleFa:d.titleFa)+'"></div>'+
         '<div class="field"><label>Episode title (English)</label><input type="text" dir="ltr" data-s="titleEn" value="'+esc(o.titleEn!=null?o.titleEn:d.titleEn)+'"></div>'+
+      '</div>'+
+      '<div class="row2">'+
+        '<div class="field"><label>زیرعنوان (فارسی — اختیاری)</label><input type="text" data-s="subFa" value="'+esc(o.subFa!=null?o.subFa:d.subFa)+'"></div>'+
+        '<div class="field"><label>Subtitle (English — optional)</label><input type="text" dir="ltr" data-s="subEn" value="'+esc(o.subEn!=null?o.subEn:d.subEn)+'"></div>'+
       '</div>'+
       '<div class="row2">'+
         '<div class="field"><label>مدت (دقیقه)</label><input type="text" data-s="length" value="'+esc(o.length!=null?o.length:d.length)+'"></div>'+

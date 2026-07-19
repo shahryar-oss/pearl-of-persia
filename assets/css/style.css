@@ -4,7 +4,16 @@
    Brand: blush + gold + sage, elegant + calm, RTL-first
    ========================================================= */
 
-/* Estedad — primary Farsi typeface (bundled) */
+/* Peyda — FINAL brand typeface per Stella (needs FontIran web license).
+   Once the licensed files are purchased, drop them into assets/fonts/ with
+   these names and uncomment — the whole site switches automatically:
+@font-face{ font-family:'Peyda'; src:url('../fonts/PeydaWeb-Regular.woff2')  format('woff2'); font-weight:400; font-style:normal; font-display:swap; }
+@font-face{ font-family:'Peyda'; src:url('../fonts/PeydaWeb-Medium.woff2')   format('woff2'); font-weight:500; font-style:normal; font-display:swap; }
+@font-face{ font-family:'Peyda'; src:url('../fonts/PeydaWeb-SemiBold.woff2') format('woff2'); font-weight:600; font-style:normal; font-display:swap; }
+@font-face{ font-family:'Peyda'; src:url('../fonts/PeydaWeb-Bold.woff2')     format('woff2'); font-weight:700; font-style:normal; font-display:swap; }
+*/
+
+/* Estedad — interim stand-in with the same weight hierarchy (bundled, open license) */
 @font-face{ font-family:'Estedad'; src:url('../fonts/Estedad-Thin.ttf') format('truetype');       font-weight:100; font-style:normal; font-display:swap; }
 @font-face{ font-family:'Estedad'; src:url('../fonts/Estedad-ExtraLight.ttf') format('truetype'); font-weight:200; font-style:normal; font-display:swap; }
 @font-face{ font-family:'Estedad'; src:url('../fonts/Estedad-Light.ttf') format('truetype');      font-weight:300; font-style:normal; font-display:swap; }
@@ -30,10 +39,15 @@
   --cream:        #FFFBF7;
   --white:        #ffffff;
 
-  /* Fonts */
-  --serif-en: 'Bodoni Moda', Georgia, serif;
-  --sans-en:  'Jost', 'Helvetica Neue', Arial, sans-serif;
-  --fa:       'Estedad', 'Jost', sans-serif;
+  /* Fonts — Stella's final direction (14 Jul 2026), "Option 1": ONE family
+     sitewide, hierarchy by weight (body Medium / headings SemiBold / titles Bold).
+     Peyda is the chosen face but needs a FontIran web license; until the licensed
+     files land in assets/fonts/, Estedad (bundled, open-license) stands in.
+     All three legacy vars alias the same stack so every existing rule follows. */
+  --brand:    'Peyda', 'Estedad', 'Jost', sans-serif;
+  --serif-en: var(--brand);
+  --sans-en:  var(--brand);
+  --fa:       var(--brand);
 
   /* Rhythm */
   --maxw: 1080px;
@@ -60,22 +74,25 @@ body{
 }
 
 /* Language-driven typography ------------------------------ */
-body.lang-fa{ font-family:var(--fa); }
-/* Style guide hierarchy: Bauer Bodoni is the BASE face, Futura is for headings.
-   Web substitutes: Bodoni Moda (base) + Jost (headings). Farsi uses Estedad throughout. */
-body.lang-en{ font-family:var(--serif-en); }
+/* Stella's Option 1 (final, 14 Jul 2026): one family for BOTH languages,
+   hierarchy expressed purely by weight — body Medium (500), headings
+   SemiBold (600), main titles Bold (700). Supersedes the earlier
+   Bodoni-base / Futura-headings split from the print style guide. */
+body.lang-fa, body.lang-en{ font-family:var(--brand); font-weight:500; }
 body.lang-fa h1, body.lang-fa h2, body.lang-fa h3,
-body.lang-fa .display{ font-family:var(--fa); font-weight:700; }
+body.lang-fa .display{ font-family:var(--brand); font-weight:600; }
 body.lang-en h1, body.lang-en h2, body.lang-en h3,
-body.lang-en .display{ font-family:var(--sans-en); font-weight:500; letter-spacing:.05em; }
+body.lang-en .display{ font-family:var(--brand); font-weight:600; letter-spacing:.03em; }
+body.lang-fa h1, body.lang-fa .display,
+body.lang-en h1, body.lang-en .display{ font-weight:700; }
 /* Functional UI stays in the sans for screen legibility */
 body.lang-en .btn, body.lang-en .nav a, body.lang-en .field input, body.lang-en .field textarea,
 body.lang-en .field label, body.lang-en .pill, body.lang-en .sess-chip, body.lang-en .lang-toggle button,
 body.lang-en .kairos-panel, body.lang-en .kairos-fab, body.lang-en .ph-slot-label, body.lang-en .breadcrumb,
 body.lang-en .tiny, body.lang-en .ph-cap, body.lang-en .session-meta{ font-family:var(--sans-en); }
 
-h1,h2,h3{ line-height:1.25; margin:0 0 .5em; color:var(--ink); letter-spacing:.01em; }
-h1,.display{ font-size:clamp(2rem, 4.5vw, 3.4rem); font-weight:500; }
+h1,h2,h3{ line-height:1.25; margin:0 0 .5em; color:var(--ink); letter-spacing:.01em; font-weight:600; }
+h1,.display{ font-size:clamp(2rem, 4.5vw, 3.4rem); font-weight:700; }
 h2{ font-size:clamp(1.5rem, 3vw, 2.3rem); }
 h3{ font-size:clamp(1.15rem, 2vw, 1.4rem); }
 p{ margin:0 0 1.1em; }
@@ -654,3 +671,32 @@ body.lang-fa .ph-slot .ph-slot-tag{ font-family:var(--fa); letter-spacing:.08em;
 }
 .resume-bar .label{ font-size:.85rem; color:var(--ink-soft); }
 .resume-bar strong{ display:block; font-size:1.05rem; }
+
+/* Episode subtitle (Stella's title + subtitle structure) */
+.ep-sub{ margin:0 0 .4rem; color:var(--ink-soft); font-size:1.08rem; font-weight:500; }
+
+/* Step 3 accordions — reflection sections expand IN PLACE so the page
+   doesn't jump and Step 4 stays visible (Stella, 14 Jul 2026) */
+.ep-acc{ border-radius:var(--radius); margin:.9rem 0 0; overflow:hidden; }
+.ep-acc.acc-questions{ background:var(--sage-2); border:1px solid var(--sage); }
+.ep-acc.acc-spiritual{ background:var(--blush); border:1px solid var(--blush-2); }
+.ep-acc > summary{ cursor:pointer; list-style:none; padding:1.1rem 1.4rem; font-weight:600;
+  display:flex; align-items:center; gap:.7rem; }
+.ep-acc > summary::-webkit-details-marker{ display:none; }
+.ep-acc.acc-questions > summary{ color:#2f4a3d; }
+.ep-acc.acc-spiritual > summary{ color:var(--gold-deep); }
+.ep-acc > summary .acc-chevron{ margin-inline-start:auto; transition:transform .25s ease; flex:none; }
+.ep-acc[open] > summary .acc-chevron{ transform:rotate(180deg); }
+.ep-acc .acc-body{ padding:0 1.4rem 1.3rem; }
+.ep-acc .acc-body ol{ padding-inline-start:1.3rem; margin:.4rem 0 0; }
+.ep-acc .acc-body ol li{ margin:.9rem 0; }
+.ep-acc.acc-spiritual blockquote{ margin:.9rem 0; padding:.7rem 1.1rem; border-inline-start:3px solid var(--gold);
+  background:rgba(255,255,255,.65); border-radius:10px; font-style:italic; }
+
+/* "Need More Support?" — closing support block after Next Video */
+.more-support{ margin-top:2.6rem; padding:1.6rem 1.8rem; background:var(--white);
+  border:1px solid var(--line); border-radius:var(--radius-lg); box-shadow:var(--shadow-card); }
+.more-support h3{ color:var(--gold-deep); }
+.more-support .verse{ margin:1.2rem 0 0; padding:.8rem 1.2rem; border-inline-start:3px solid var(--gold);
+  background:var(--cream); border-radius:10px; font-style:italic; }
+.more-support .verse-ref{ display:block; margin-top:.4rem; font-style:normal; font-weight:600; font-size:.85rem; color:var(--ink-soft); }

@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opt,wght@0,6..96,400;0,6..96,500;1,6..96,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=37">
+<link rel="stylesheet" href="assets/css/style.css?v=38">
 </head>
 <body class="lang-fa" dir="rtl">
 <div id="site-header"></div>
@@ -47,8 +47,9 @@
 
 <div id="site-footer"></div>
 <div id="site-kairos"></div>
-<script src="assets/js/content.js?v=37"></script>
-<script src="assets/js/app.js?v=37"></script>
+<script src="assets/js/content.js?v=38"></script>
+<script src="assets/js/episodes.js?v=38"></script>
+<script src="assets/js/app.js?v=38"></script>
 <script>
   window.popPageInit = function(){
     function isFa(){ return POP.getState().lang === 'fa'; }
@@ -82,9 +83,9 @@
 
         var name = fa ? c.fa : c.en;
         var desc = fa ? c.descFa : c.descEn;
-        var rangeLabel = fa
-          ? ('گفت‌وگوهای ' + POP.toFa(start) + '–' + POP.toFa(end))
-          : ('Conversations ' + start + '–' + end);
+        var rangeLabel = (start === end)
+          ? (fa ? ('گفت‌وگوی ' + POP.toFa(start)) : ('Conversation ' + start))
+          : (fa ? ('گفت‌وگوهای ' + POP.toFa(start) + '–' + POP.toFa(end)) : ('Conversations ' + start + '–' + end));
 
         var sessions = '';
         if (reached){

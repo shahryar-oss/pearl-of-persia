@@ -8,31 +8,38 @@
 (function () {
   'use strict';
 
-  /* ---------- Episode data (placeholder titles; Stella supplies real copy) ---------- */
+  /* ---------- Episode data — Stella's final structure (14 Jul 2026):
+     6 named groups, titles + subtitles from EP_TITLES (episodes.js) ---------- */
   const CLUSTERS = [
-    { key:'foundations',   fa:'پایه‌ها',                 en:'Foundations',                 range:[1,4],
-      descFa:'جایی برای رسیدن به احساس امنیت و آرام شدن.', descEn:'A place to arrive, feel safe, and settle.' },
-    { key:'understanding', fa:'شناختِ خود',              en:'Understanding Yourself',      range:[5,10],
-      descFa:'با مهربانی به آنچه درون شماست نگاه می‌کنیم.', descEn:'Looking gently at what lives within you.' },
-    { key:'pain',          fa:'وقتی درد سنگین می‌شود',    en:'When the Pain Feels Too Much', range:[11,12],
-      descFa:'ابزارهایی برای لحظه‌های دشوار.',            descEn:'Tools for the hardest moments.' },
-    { key:'relationships', fa:'رابطه‌ها و مرزها',         en:'Relationships & Boundaries',  range:[13,21],
-      descFa:'دربارهٔ پیوند، اعتماد و فضای سالم.',         descEn:'On connection, trust, and healthy space.' },
-    { key:'shame',         fa:'شرم، هویت و شفا',          en:'Shame, Identity & Healing',   range:[22,26],
-      descFa:'به سوی پذیرش، معنا و امید.',                descEn:'Toward acceptance, meaning, and hope.' },
+    { key:'foundations',   fa:'مبانی: امنیت، آرامش، و معنا',              en:'Foundations: Safety, Calm, and Meaning',       range:[1,2],
+      descFa:'جایی برای رسیدن به احساس امنیت و آرام شدن.',   descEn:'A place to arrive, feel safe, and settle.' },
+    { key:'understanding', fa:'درک آنچه در درون ما در حال رخ دادن است',    en:'Understanding What Is Happening Inside Us',    range:[3,10],
+      descFa:'با مهربانی به آنچه درون شماست نگاه می‌کنیم.',   descEn:'Looking gently at what lives within you.' },
+    { key:'pain',          fa:'وقتی درد بیش از حد سنگین می‌شود',           en:'When the Pain Feels Too Much',                 range:[11,12],
+      descFa:'ابزارهایی برای لحظه‌های دشوار.',               descEn:'Tools for the hardest moments.' },
+    { key:'relationships', fa:'رابطه‌ها زیر فشار',                        en:'Relationships Under Pressure',                 range:[13,23],
+      descFa:'دربارهٔ پیوند، اعتماد و فضای سالم.',            descEn:'On connection, trust, and healthy space.' },
+    { key:'integration',   fa:'یکپارچه‌سازی تروما',                       en:'Trauma Integration',                           range:[24,25],
+      descFa:'یافتن صدا و معنا برای آنچه از سر گذرانده‌اید.', descEn:'Finding voice and meaning for what you have carried.' },
+    { key:'identity',      fa:'هویت، ارزشمندی، و ادامه دادن زندگی',       en:'Identity, Worth, and Continuing to Live',      range:[26,26],
+      descFa:'به سوی ارزشمندی، معنا و ادامهٔ زندگی.',         descEn:'Toward worth, meaning, and continuing to live.' },
   ];
 
-  // Build 26 episodes from clusters
+  // Build 26 episodes from clusters; titles come from Stella's EP_TITLES
   const EPISODES = [];
+  const T = window.EP_TITLES || {};
   CLUSTERS.forEach(c => {
     for (let n = c.range[0]; n <= c.range[1]; n++) {
+      const t = T[n] || {};
       EPISODES.push({
         id: n,
         cluster: c.key,
-        titleFa: 'گفت‌وگوی ' + toFa(n),
-        titleEn: 'Conversation ' + n,
-        descFa: 'توضیح کوتاه این گفت‌وگو در اینجا قرار می‌گیرد. (محتوای نمونه)',
-        descEn: 'A short description of this conversation goes here. (placeholder content)',
+        titleFa: t.fa || ('گفت‌وگوی ' + toFa(n)),
+        titleEn: t.en || ('Conversation ' + n),
+        subFa: t.subFa || '',
+        subEn: t.subEn || '',
+        descFa: '',
+        descEn: '',
         length: 12 + (n % 4),
       });
     }
@@ -44,7 +51,7 @@
     EPISODES.forEach(function(e){
       var o = _ov[e.id] || _ov[String(e.id)];
       if (!o) return;
-      ['titleFa','titleEn','descFa','descEn','length','videoUrl','worksheetUrl'].forEach(function(k){
+      ['titleFa','titleEn','subFa','subEn','descFa','descEn','length','videoUrl','worksheetUrl'].forEach(function(k){
         if (o[k] != null && o[k] !== '') e[k] = o[k];
       });
     });
